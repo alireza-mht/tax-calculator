@@ -1,8 +1,11 @@
 APP := tax-calculator
 CMD_DIR := cmd/$(APP)
-MAKECMDGOALS ?= help
+
 TARGETS := build test lint doc
 
+.PHONY: $(TARGETS) help
+
+# Generic rule to forward targets
 $(TARGETS):
 	@echo "==> Running '$@' for $(APP)"
 	$(MAKE) -C $(CMD_DIR) $@

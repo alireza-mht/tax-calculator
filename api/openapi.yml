@@ -1,0 +1,10 @@
+openapi: 3.0.3
+info:
+  title: Tax Calculator API
+  description: A simple API for calculating tax
+  version: 1.0.0
+
+servers:
+- url: /v1
+
+

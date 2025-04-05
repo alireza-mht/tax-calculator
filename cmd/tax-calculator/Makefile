@@ -1,20 +1,36 @@
 APP_NAME := tc
 BUILD_DIR := ../../bin
+API_DIR := ../../api
+
 
 .PHONY: build test lint doc
 
-build:
+
+############# Build Application #############################
+
+build: build-api build-go
+
+build-api:
+	$(MAKE) -C $(API_DIR)
+
+build-go:
 	@echo "Building $(APP_NAME)..."
 	go build -o $(BUILD_DIR)/$(APP_NAME) .
 
+
+############# Test Application #############################
+
 test:
 	@echo "Running tests for $(APP_NAME)..."
-	go test ./...
+
+
+################## Linter ##################################
 
 lint:
 	@echo "Linting $(APP_NAME)..."
-	golangci-lint run ./...
+
+
+################## Doc ##################################
 
 doc:
 	@echo "Generating docs for $(APP_NAME)..."
-	go doc ./...

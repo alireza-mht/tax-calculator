@@ -1,2 +1,8 @@
 # output dirs
 bin/
+internal/server/api/
+
+
+
+# Files
+go.sum
