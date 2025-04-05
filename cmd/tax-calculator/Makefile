@@ -20,7 +20,7 @@ build-go:
 .PHONY: deps
 deps:
 	@if ! which oapi-codegen; then \
-		go get github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen@v2.1.0; \
+		go install github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen@v2.1.0; \
 	fi
 
 
