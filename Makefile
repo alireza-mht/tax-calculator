@@ -1,7 +1,7 @@
 APP := tax-calculator
 CMD_DIR := cmd/$(APP)
 
-TARGETS := build test lint doc
+TARGETS := build test lint doc deps
 
 .PHONY: $(TARGETS) help
 
