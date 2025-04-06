@@ -2,9 +2,12 @@
 package main
 
 import (
-	"fmt"
+	"github.com/alireza-mht/tax-calculator/cmd/tax-calculator/cmd"
+	clicommon "github.com/alireza-mht/tax-calculator/cmd/tax-calculator/cmd/common"
 )
 
 func main() {
-	fmt.Println("Hello World!")
+	if err := cmd.RootCmd.Execute(); err != nil {
+		clicommon.Logger.Fatalln(err.Error())
+	}
 }
