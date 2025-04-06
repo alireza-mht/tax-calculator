@@ -54,3 +54,15 @@ lint: deps
 .PHONY: doc
 doc:
 	@echo "Generating docs for $(APP_NAME)..."
+
+############# Clean #############################
+
+.PHONY: clean
+clean: clean-api
+	@echo "Cleaning $(APP_NAME)..."
+	rm -rf $(BUILD_DIR)/$(APP_NAME)*
+	go clean
+
+.PHONY: clean-api 
+clean-api:
+	$(MAKE) -C $(API_DIR) clean
