@@ -1,0 +1,41 @@
+linters:
+  enable:
+    - bidichk
+    - bodyclose
+    - containedctx
+    - dupl
+    - errcheck
+    - errname
+    - errorlint
+    - gocritic
+    - godox
+    - err113
+    - goimports
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - nolintlint
+    - prealloc
+    - predeclared
+    - revive
+    - staticcheck
+    - stylecheck
+    - usetesting
+    - tparallel
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - wastedassign
+    - whitespace
+
+issues:
+  exclude-use-default: false
+  # Maximum issues count per one linter. Set to 0 to disable. Default is 50.
+  max-issues-per-linter: 0
+
+  # Maximum count of issues with the same text. Set to 0 to disable. Default is 3.
+  max-same-issues: 0

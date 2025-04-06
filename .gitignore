@@ -2,7 +2,8 @@
 bin/
 internal/server/api/
 
-
-
 # Files
 go.sum
+
+# Others
+.vscode
