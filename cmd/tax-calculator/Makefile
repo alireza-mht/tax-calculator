@@ -11,7 +11,7 @@ endif
 
 ############# Build Application #############################
 .PHONY: build 
-build: build-api build-go
+build: build-prepare build-api build-go
 
 .PHONY: build-api 
 build-api: deps
@@ -22,6 +22,11 @@ build-go:
 	@echo "Building $(APP_NAME)..."
 	go build -o $(BUILD_DIR)/$(APP_NAME) .
 
+# Get code dependencies
+.PHONY: build-prepare
+build-prepare:
+	go mod tidy
+	go fmt ./...
 ############# Install deps #############################
 
 .PHONY: deps
