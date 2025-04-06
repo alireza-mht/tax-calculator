@@ -11,7 +11,7 @@ endif
 
 ############# Build Application #############################
 .PHONY: build 
-build: build-prepare build-api build-go
+build: build-api build-prepare build-go
 
 .PHONY: build-api 
 build-api: deps
