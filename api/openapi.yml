@@ -7,4 +7,102 @@ info:
 servers:
 - url: /v1
 
-
+paths:
+  /tax-calculator/tax-year/{year}:
+    get:
+      summary: Display the total income tax for based on a salary in a specific year
+      parameters:
+      - name: year
+        in: path
+        description: Tax year to calculate tax income
+        required: true
+        schema:
+          type: integer
+      - name: salary
+        in: query
+        description: Yearly salary
+        required: true
+        schema:
+          type: number
+          format: float
+      responses:
+        '200':
+          description: Tax income information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/incomeTax'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '404':
+          description: Not found
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '503':
+          description: Service unavailable
+components:
+  schemas:
+    errorResponse:
+      type: object
+      required: ["error", "message"]
+      properties:
+        error:
+          title: Error
+          description: Application Error
+          type: string
+        message:
+          title: Message
+          description: Application Error Message
+          type: string
+    incomeTax:
+      type: object
+      required: ["totalTax", "effectiveRate", "taxPerBand"]
+      properties:
+        totalTax:
+          title: Total Tax
+          description: Total income tax
+          type: integer
+        effectiveRate:
+          title: Effective Rate
+          description: Average income tax rate 
+          type: number
+          format: float
+        taxPerBand:
+          title: Tax Per Band
+          description: Calculated income tax per bracket
+          type: array
+          items:
+            title: Tax Brackets
+            $ref: '#/components/schemas/taxBrackets'
+    taxBrackets:
+      type: object
+      required: ["min", "max", "rate", "tax"]
+      properties:
+        min:
+          title: Min Bracket
+          description: Minimum range of the bracket
+          type: number
+          format: float
+        max:
+          title: Max Bracket
+          description: Maximum range of the bracket
+          type: number
+          format: float
+        rate:
+          title: Tax Rate
+          description: Tax rate applied to the bracket
+          type: number
+          format: float
+        tax:
+          title: Bracket Tax
+          description: Average income tax rate of the bracket
+          type: number
+          format: float
