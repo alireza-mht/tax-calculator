@@ -69,7 +69,8 @@ components:
         totalTax:
           title: Total Tax
           description: Total income tax
-          type: integer
+          type: number
+          format: float
         effectiveRate:
           title: Effective Rate
           description: Average income tax rate 
