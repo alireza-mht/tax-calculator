@@ -26,6 +26,8 @@ func (s *Server) GetTaxCalculatorTaxYearYear(c *gin.Context, year int, salary ap
 		switch {
 		case common.IsErrBadRequest(err):
 			c.JSON(http.StatusBadRequest, infoErr(http.StatusText(http.StatusBadRequest), err.Error()))
+		case common.IsErrNotFound(err):
+			c.JSON(http.StatusNotFound, infoErr(http.StatusText(http.StatusNotFound), err.Error()))
 		default:
 			c.JSON(http.StatusInternalServerError, infoErr(http.StatusText(http.StatusInternalServerError), err.Error()))
 		}

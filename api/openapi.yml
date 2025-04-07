@@ -40,6 +40,10 @@ paths:
                 $ref: '#/components/schemas/errorResponse'
         '404':
           description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
         '500':
           description: Internal error
           content:

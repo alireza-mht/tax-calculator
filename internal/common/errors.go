@@ -24,6 +24,19 @@ func (e *BadRequestError) Error() string {
 }
 
 func IsErrBadRequest(err error) bool {
-	var checkErr *InternalError
+	var checkErr *BadRequestError
+	return errors.As(err, &checkErr)
+}
+
+type NotFoundError struct {
+	Details string
+}
+
+func (e *NotFoundError) Error() string {
+	return e.Details
+}
+
+func IsErrNotFound(err error) bool {
+	var checkErr *NotFoundError
 	return errors.As(err, &checkErr)
 }

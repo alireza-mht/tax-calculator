@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/alireza-mht/tax-calculator/internal/common"
+	"github.com/alireza-mht/tax-calculator/internal/log"
 	"github.com/alireza-mht/tax-calculator/internal/server/api"
 )
 
@@ -26,16 +27,35 @@ type taxBracketInfo struct {
 // CalculateIncomeTax computes the income tax for a given year and salary
 func CalculateIncomeTax(year int, salary float32) (api.IncomeTax, error) {
 	var incomeTax api.IncomeTax
+
+	// Validate the parameters
+	if salary < 0 {
+		return incomeTax, &common.BadRequestError{Details: "it is not possible to use negative value for salary"}
+	}
+	var supportedTaxYears = map[int]struct{}{
+		2019: {},
+		2021: {},
+		2022: {},
+		2023: {},
+	}
+	if _, ok := supportedTaxYears[year]; !ok {
+		return incomeTax, &common.NotFoundError{Details: "tax info for the specified year not found"}
+	}
+
+	// Fetch the requested tax year information
 	taxInfo, err := FetchTaxYearInfo(year)
 	if err != nil {
 		return incomeTax, &common.InternalError{Details: fmt.Sprintf("failed to fetch the tax year information: %s", err)}
 	}
 
+	// Compute the tax bracket information
 	return ComputeTaxBreakdown(taxInfo, salary)
 }
 
 // FetchTaxYearInfo retrieves tax bracket information for a specific year from an external service
 func FetchTaxYearInfo(year int) (*taxInfo, error) {
+	log.Debug(fmt.Sprintf("Fetching the tax information for the year %d from external service ...", year))
+
 	externalServiceUrl := "localhost:5001/tax-calculator/tax-year/" + strconv.Itoa(year)
 	resp, err := common.HttpRequestWithResponse(externalServiceUrl, http.MethodGet, "", "")
 	if err != nil {
@@ -50,7 +70,7 @@ func FetchTaxYearInfo(year int) (*taxInfo, error) {
 
 	// Check the error code
 	if resp.StatusCode != http.StatusOK {
-		return nil, &common.InternalError{Details: fmt.Sprintf("Failed to get the response from remote tax info container. Request returned status code %d, with body: %s", resp.StatusCode, string(body))}
+		return nil, &common.InternalError{Details: fmt.Sprintf("failed to get the response from remote tax info container. Request returned status code %d, with body: %s", resp.StatusCode, string(body))}
 	}
 
 	var taxInfo taxInfo
@@ -62,6 +82,8 @@ func FetchTaxYearInfo(year int) (*taxInfo, error) {
 
 // ComputeTaxBreakdown calculates the detailed tax breakdown based on salary and tax brackets
 func ComputeTaxBreakdown(taxInfo *taxInfo, salary float32) (api.IncomeTax, error) {
+	log.Debug(fmt.Sprintf("Computing the tax bracket information for salary %.2f ...", salary))
+
 	var incomeTax api.IncomeTax
 	if taxInfo == nil {
 		return incomeTax, &common.InternalError{Details: "failed to compute the tax breakdown because taxInfo is nil"}
