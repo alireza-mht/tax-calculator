@@ -14,7 +14,6 @@ help:
 	@echo "Usage: make [target]"
 	@echo "Targets:"
 	@echo "  build   - Build the Go application"
-	@echo "  test    - Run tests"
 	@echo "  lint    - Run linter"
-	@echo "  doc     - Generate documentation"
+	@echo "  api     - Generate api required files"
 	@echo "  clean   - Clean the added artifacts"
