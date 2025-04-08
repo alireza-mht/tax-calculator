@@ -80,3 +80,4 @@ Due to limited time for completing the features, the following are key items on 
 4. **Component Testing**: Since the application depends on an external service, component testing would ensure that the components function together effectively, such as by mocking the external service.
 5. **Documentation**: Cobra provides CLI documentation that offers a helpful overview of existing commands. Additionally, Go’s built-in documentation is valuable. Including these in the project would enhance interaction with the application.
 6. **Complete Makefile**: There are some steps remaining in the Makefile that would be nice to have. Completing targets like `make test` and `make doc` would improve usability.
+7. **Context Improvements**: The current code does not utilize context. Introducing context support can improve logging by enabling the use of trace IDs for better observability and request tracking.
