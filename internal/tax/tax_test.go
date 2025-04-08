@@ -4,11 +4,14 @@ import (
 	"testing"
 
 	"github.com/alireza-mht/tax-calculator/internal/common"
+	"github.com/alireza-mht/tax-calculator/internal/log"
 	"github.com/alireza-mht/tax-calculator/internal/server/api"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestComputeTaxBreakdown(t *testing.T) {
+	log.InitLogger("debug")
+
 	tests := []struct {
 		name         string
 		taxInfo      *taxInfo
