@@ -1,11 +1,13 @@
 package tax
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/alireza-mht/tax-calculator/internal/common"
 	"github.com/alireza-mht/tax-calculator/internal/log"
@@ -55,29 +57,51 @@ func CalculateIncomeTax(year int, salary float32) (api.IncomeTax, error) {
 // FetchTaxYearInfo retrieves tax bracket information for a specific year from an external service
 func FetchTaxYearInfo(year int) (*taxInfo, error) {
 	log.Debug(fmt.Sprintf("Fetching the tax information for the year %d from external service ...", year))
-
 	externalServiceUrl := "localhost:5001/tax-calculator/tax-year/" + strconv.Itoa(year)
-	resp, err := common.HttpRequestWithResponse(externalServiceUrl, http.MethodGet, "", "")
-	if err != nil {
-		return nil, &common.InternalError{Details: fmt.Sprintf("failed to get the tax info from %s: %s", externalServiceUrl, err)}
-	}
 
-	// Read response body
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, &common.InternalError{Details: fmt.Sprintf("failed to read response body: %s", err)}
-	}
+	// Retry information
+	retryInterval := 5 * time.Second
+	timeout := 1 * time.Minute
 
-	// Check the error code
-	if resp.StatusCode != http.StatusOK {
-		return nil, &common.InternalError{Details: fmt.Sprintf("failed to get the response from remote tax info container. Request returned status code %d, with body: %s", resp.StatusCode, string(body))}
-	}
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
 
-	var taxInfo taxInfo
-	if err := json.Unmarshal(body, &taxInfo); err != nil {
-		return nil, &common.InternalError{Details: fmt.Sprintf("failed to unmarshal response: %s", err)}
+	ticker := time.NewTicker(retryInterval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return nil, &common.InternalError{Details: "timeout: retrying to get the tax info failed"}
+		case <-ticker.C:
+			resp, err := common.HttpRequestWithResponse(externalServiceUrl, http.MethodGet, "", "")
+			if err != nil {
+				return nil, &common.InternalError{Details: fmt.Sprintf("failed to get the tax info from %s: %s", externalServiceUrl, err)}
+			}
+
+			switch resp.StatusCode {
+			case http.StatusInternalServerError:
+				log.Debug("External service is down. Retrying...")
+				continue
+			case http.StatusOK:
+				// Read response body
+				body, err := io.ReadAll(resp.Body)
+				defer resp.Body.Close()
+				if err != nil {
+					return nil, &common.InternalError{Details: fmt.Sprintf("failed to read response body: %s", err)}
+				}
+
+				var taxInfo taxInfo
+				if err := json.Unmarshal(body, &taxInfo); err != nil {
+					return nil, &common.InternalError{Details: fmt.Sprintf("failed to unmarshal response: %s", err)}
+				}
+				return &taxInfo, nil
+			default:
+				return nil, &common.InternalError{Details: fmt.Sprintf("failed to get the response from remote tax info container. Request returned status code %d", resp.StatusCode)}
+
+			}
+		}
 	}
-	return &taxInfo, nil
 }
 
 // ComputeTaxBreakdown calculates the detailed tax breakdown based on salary and tax brackets

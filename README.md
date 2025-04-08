@@ -67,6 +67,8 @@ $ curl -X GET http://localhost:8383/v1/tax-calculator/tax-year/2023?salary=15000
 3. **Unit Tests**: Unit tests are available for certain functions that do not require mocking.
 4. **Logging**: A logging package is included to ensure proper logging of essential information.
 5. **API Design**: The general API design is available under `./api/openapi.yml`.
+6. **Retry Mechanism**: The current retry mechanism employs a ticker to attempt retries at fixed intervals. However, this interval is not consistently maintained because it fails to account for processing time. A more precise approach would be to utilize the time module and implement proper sleep durations to ensure accurate retry timing.
+
 
 # Wish List
 
@@ -76,6 +78,5 @@ Due to limited time for completing the features, the following are key items on 
 2. **Provide a Helm Chart**: A Helm chart would be beneficial for deploying the application in a Kubernetes environment.
 3. **Integration Testing**: It’s feasible to run the current application and an external service within the CI pipeline, testing the provided endpoint by running both containers in the pipeline.
 4. **Component Testing**: Since the application depends on an external service, component testing would ensure that the components function together effectively, such as by mocking the external service.
-5. **Retry Mechanism**: Implementing a retry mechanism to manage errors from the external service.
-6. **Documentation**: Cobra provides CLI documentation that offers a helpful overview of existing commands. Additionally, Go’s built-in documentation is valuable. Including these in the project would enhance interaction with the application.
-7. **Complete Makefile**: There are some steps remaining in the Makefile that would be nice to have. Completing targets like `make test` and `make doc` would improve usability.
+5. **Documentation**: Cobra provides CLI documentation that offers a helpful overview of existing commands. Additionally, Go’s built-in documentation is valuable. Including these in the project would enhance interaction with the application.
+6. **Complete Makefile**: There are some steps remaining in the Makefile that would be nice to have. Completing targets like `make test` and `make doc` would improve usability.
